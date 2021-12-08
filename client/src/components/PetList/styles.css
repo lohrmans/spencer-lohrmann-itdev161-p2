@@ -1,25 +1,32 @@
-.postListItem {
+.petListItem {
   padding: 10px;
   border: solid 1px transparent;
 }
 
-.postListItem:hover {
+.petListItem:hover {
   background-color: #eeeeee;
   border-color: #aaaaaa;
   cursor: pointer;
 }
 
-.postListItem p {
+.petListItem p {
   max-width: 500px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.postControls {
+.petControls {
   margin: 10px 0 10px 0;
 }
 
-.postControls button {
+.petControls button {
   margin-left: 10px;
+}
+
+.Pet-list{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
 }

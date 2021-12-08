@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import User from './models/User';
-import Post from './models/Post';
+import Pet from './models/Pet';
 import auth from './middleware/auth';
 
 // Initialize express application
@@ -161,20 +161,20 @@ const returnToken = (user, res) => {
   );
 };
 
-// Post endpoints
+// Pet endpoints
 /**
- * @route POST api/posts
- * @desc Create post
+ * @route POST api/pets
+ * @desc Create pet
  */
 app.post(
-  '/api/posts',
+  '/api/pets',
   [
     auth,
     [
-      check('title', 'Title text is required')
+      check('name', 'Name is required')
         .not()
         .isEmpty(),
-      check('body', 'Body text is required')
+      check('color', 'Color is required')
         .not()
         .isEmpty()
     ]
@@ -184,22 +184,22 @@ app.post(
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });
     } else {
-      const { title, body } = req.body;
+      const { name, color } = req.body;
       try {
-        //Get the user who created the post
+        //Get the user who created the pet
         const user = await User.findById(req.user.id);
 
-        //Create a new post
-        const post = new Post({
+        //Create a new pet
+        const pet = new Pet({
           user: user.id,
-          title: title,
-          body: body
+          name: name,
+          color: color
         });
 
         //Save to the db and return
-        await post.save();
+        await pet.save();
 
-        res.json(post);
+        res.json(pet);
       } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
@@ -209,14 +209,17 @@ app.post(
 );
 
 /**
- * @route GET api/users
- * @desc Get posts
+ * @route GET api/pets
+ * @desc Get pets
  */
-app.get('/api/posts', auth, async (req, res) => {
+app.get('/api/pets', auth, async (req, res) => {
   try {
-    const posts = await Post.find().sort({ date: -1 });
+    //Get the user who created the pet
+    const user = await User.findById(req.user.id);
 
-    res.json(posts);
+    const pets = await Pet.find( { user: user.id } ).sort({ name: 1 });
+
+    res.json(pets);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -224,46 +227,24 @@ app.get('/api/posts', auth, async (req, res) => {
 });
 
 /**
- * @route GET api/posts/:id
- * @desc Get post
+ * @route GET api/pets/:id
+ * @desc Get pet
  */
-app.get('/api/posts/:id', auth, async (req, res) => {
+app.get('/api/pets/:id', auth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const pet = await Pet.findById(req.params.id);
 
-    //Make sure the post was found
-    if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
+    //Make sure the pet was found
+    if (!pet) {
+      return res.status(404).json({ msg: 'Pet not found' });
     }
 
-    res.json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server error');
-  }
-});
-
-/**
- * @route DELETE api/posts/:id
- * @desc Delete a post
- */
-app.delete('/api/posts/:id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-
-    // Make sure the post was found
-    if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
-    }
-
-    // Make sure the request user created the post
-    if (post.user.toString() !== req.user.id) {
+    // Make sure the request user created the pets
+    if (pet.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'User not authorized' });
     }
 
-    await post.remove();
-
-    res.json({ msg: 'Post removed' });
+    res.json(pet);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -271,31 +252,89 @@ app.delete('/api/posts/:id', auth, async (req, res) => {
 });
 
 /**
- * @route PUT api/posts/:id
- * @desc Update a post
+ * @route DELETE api/pets/:id
+ * @desc Delete a pet
  */
-app.put('/api/posts/:id', auth, async (req, res) => {
+app.delete('/api/pets/:id', auth, async (req, res) => {
   try {
-    const { title, body } = req.body;
-    const post = await Post.findById(req.params.id);
+    const pet = await Pet.findById(req.params.id);
 
-    //Make sure the post was found
-    if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
+    // Make sure the pet was found
+    if (!pet) {
+      return res.status(404).json({ msg: 'Pet not found' });
     }
 
-    //Make sure the request user created the post
-    if (post.user.toString() !== req.user.id) {
+    // Make sure the request user created the pet
+    if (pet.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'User not authorized' });
     }
 
-    //Update the post and return
-    post.title = title || post.title;
-    post.body = body || post.body;
+    await pet.remove();
 
-    await post.save();
+    res.json({ msg: 'Pet removed' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
 
-    res.json(post);
+/**
+ * @route PUT api/pets/:id/rename
+ * @desc Update a pet's name
+ */
+app.put('/api/pets/:id/rename', auth, async (req, res) => {
+  try {
+    const { name } = req.body;
+    const pet = await Pet.findById(req.params.id);
+
+    //Make sure the pet was found
+    if (!pet) {
+      return res.status(404).json({ msg: 'Pet not found' });
+    }
+
+    //Make sure the request user created the pet
+    if (pet.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User not authorized' });
+    }
+
+    //Update the pet and return
+    pet.name = name || pet.name;
+
+    await pet.save();
+
+    res.json(pet);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
+/**
+ * @route PUT api/pets/:id/interact
+ * @desc Update a pet's last interaction date
+ */
+app.put('/api/pets/:id/interact', auth, async (req, res) => {
+  try {
+    const pet = await Pet.findById(req.params.id);
+
+    //Make sure the pet was found
+    if (!pet) {
+      return res.status(404).json({ msg: 'Pet not found' });
+    }
+
+    console.error("pet.user.toString()" + pet.user.toString());
+    console.error("req.user.id" + req.user.id)
+
+    //Make sure the request user created the pet
+    if (pet.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User not authorized' });
+    }
+
+    pet.lastInteractionDate = Date.now();
+
+    await pet.save();
+
+    res.json(pet);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');

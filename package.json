@@ -1,7 +1,7 @@
 {
-  "name": "itdev161-assignments-v2",
+  "name": "lohrmann-itdev161-p2",
   "version": "1.0.0",
-  "description": "itdev161-assignments-v2",
+  "description": "lohrmann-itdev161-p2",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,14 +12,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/mike-hunsicker-matc/itdev161-assignments-v2.git"
+    "url": "git@github.com:lohrmans/spencer-lohrmann-itdev161-p2.git"
+    
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/mike-hunsicker-matc/itdev161-assignments-v2/issues"
+    "url": "https://github.com/lohrmans/spencer-lohrmann-itdev161-p2/issues"
+    
   },
-  "homepage": "https://gitlab.com/mike-hunsicker-matc/itdev161-assignments-v2#readme",
+  "homepage": "https://github.com/lohrmans/spencer-lohrmann-itdev161-p2#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "config": "^3.2.2",

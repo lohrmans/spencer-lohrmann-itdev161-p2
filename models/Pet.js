@@ -1,24 +1,24 @@
 import mongoose from 'mongoose';
 
-const PostSchema = new mongoose.Schema({
+const PetSchema = new mongoose.Schema({
   user: {
     type: 'ObjectId',
     ref: 'User'
   },
-  title: {
+  name: {
     type: String,
     required: true
   },
-  body: {
+  color: {
     type: String,
     required: true
   },
-  date: {
-    type: Date,
+  lastInteractionDate: {
+    type: Number,
     default: Date.now
   }
 });
 
-const Post = mongoose.model('post', PostSchema);
+const Pet = mongoose.model('pet', PetSchema);
 
-export default Post;
+export default Pet;

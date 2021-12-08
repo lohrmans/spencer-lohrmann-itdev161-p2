@@ -4,15 +4,15 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import './App.css';
 import Register from './components/Register/Register';
 import Login from './components/Login/Login';
-import PostList from './components/PostList/PostList';
-import Post from './components/Post/Post';
-import CreatePost from './components/Post/CreatePost';
-import EditPost from './components/Post/EditPost';
+import PetList from './components/PetList/PetList';
+import Pet from './components/Pet/Pet';
+import CreatePet from './components/Pet/CreatePet';
+import EditPet from './components/Pet/EditPet';
 
 class App extends React.Component {
   state = {
-    posts: [],
-    post: null,
+    pets: [],
+    pet: null,
     token: null,
     user: null
   }
@@ -67,10 +67,10 @@ class App extends React.Component {
         }
       };
       axios
-        .get('http://localhost:5000/api/posts', config)
+        .get('http://localhost:5000/api/pets', config)
         .then(response => {
           this.setState({
-            posts: response.data
+            pets: response.data
           });
         })
         .catch(error => {
@@ -82,17 +82,16 @@ class App extends React.Component {
   logOut = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.setState({ user: null, token: null });
+    this.setState({ user: null, token: null, pets:[], pet: null });
   }
 
-  viewPost = post => {
-    console.log(`view ${post.title}`);
+  viewPet = pet => {
     this.setState({
-      post: post
+      pet: pet
     });
   };
 
-  deletePost = post => {
+  deletePet = pet => {
     const { token } = this.state;
 
     if (token) {
@@ -103,47 +102,70 @@ class App extends React.Component {
       };
 
       axios
-        .delete(`http://localhost:5000/api/posts/${post._id}`, config)
+        .delete(`http://localhost:5000/api/pets/${pet._id}`, config)
         .then(response => {
-          const newPosts = this.state.posts.filter(p => p._id !== post._id);
+          const newPets = this.state.pets.filter(p => p._id !== pet._id);
           this.setState({
-            posts: [...newPosts]
+            pets: [...newPets],
+            pet: null
           });
         })
         .catch(error => {
-          console.error(`Error deleting post: ${error}`);
+          console.error(`Error deleting pet: ${error}`);
         });
     }
   };
 
-  editPost = post => {
+  interactWithPet = pet => {
+    const { token } = this.state;
+
+    if (token){
+      const config = {
+        headers: {
+          'x-auth-token': token
+        }
+      };
+
+      axios
+        .put(`http://localhost:5000/api/pets/${pet._id}/interact`, {}, config)
+        .then(response => {
+          const newPet = pet
+          newPet.lastInteractionDate = Date.now()
+
+          this.onPetUpdated(newPet)
+        })
+        .catch(error => {
+          console.error(`Error interacting with pet: ${error}`);
+        });
+    }
+  };
+
+  onPetCreated = pet => {
+    const newPets = [...this.state.pets, pet];
+
     this.setState({
-      post: post
+      pets: newPets
     });
   };
 
-  onPostCreated = post => {
-    const newPosts = [...this.state.posts, post];
+  onPetUpdated = pet => {
+    const newPets = [...this.state.pets];
+    const index = newPets.findIndex(p => p._id === pet._id);
+    
+    newPets[index] = pet;
 
     this.setState({
-      posts: newPosts
+      pets: newPets
     });
   };
 
-  onPostUpdated = post => {
-    console.log('updated post: ', post);
-    const newPosts = [...this.state.posts];
-    const index = newPosts.findIndex(p => p._id === post._id);
-
-    newPosts[index] = post;
-
-    this.setState({
-      posts: newPosts
-    });
+  //Removes current pet.
+  resetPet = pet => {
+    this.setState({ pet: null });
   };
 
   render() {
-    let { user, posts, post, token } = this.state;
+    let { user, pets, pet, token } = this.state;
     const authProps = {
       authenticateUser: this.authenticateUser
     }
@@ -152,17 +174,13 @@ class App extends React.Component {
       <Router>
         <div className="App">
           <header className="App-header">
-            <h1>GoodThings</h1>
+            <h1>CHUNKY <span role="img" aria-label="heart eyes">🥰</span> PETS</h1>
             <ul>
               <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                {user ? (
-                  <Link to="/new-post">New Post</Link>
-                ) : (
+                {user ? 
+                  <Link to="/new-pet">New Pet</Link> :
                   <Link to="/register">Register</Link>
-                )}
+                }
               </li>
               <li>
                 {user ? 
@@ -178,29 +196,38 @@ class App extends React.Component {
               <Route exact path="/">
                 {user ? (
                   <React.Fragment>
-                    <div>Hello {user}!</div>
-                    <PostList 
-                      posts={posts} 
-                      clickPost={this.viewPost} 
-                      deletePost={this.deletePost}
-                      editPost={this.editPost}
-                    />
+                    <div className="Pet-container">
+                      <div className="Pet-list">
+                        <PetList
+                          pets={pets} 
+                          clickPet={this.viewPet} 
+                        />
+                      </div>
+                      <Pet
+                        class="Current-pet"
+                        pet={this.state.pet}
+                        interactWithPet={this.interactWithPet}
+                        deletePet={this.deletePet}
+                      />
+                    </div>
                   </React.Fragment>
                 ) : (
-                  <React.Fragment>Please Register or Login</React.Fragment>
+                  <React.Fragment>
+                    <div className="new-user">
+                      <p>Register or Login to view pets!</p>
+                    </div>
+                  </React.Fragment>
                 )}
               </Route>
-              <Route path="/posts/:postId">
-                <Post post={post} />
+              <Route path="/new-pet">
+                <CreatePet token={token} onPetCreated={this.onPetCreated} />
               </Route>
-              <Route path="/new-post">
-                <CreatePost token={token} onPostCreated={this.onPostCreated} />
-              </Route>
-              <Route path="/edit-post/:postId">
-                <EditPost
+              <Route path="/rename-pet/:petId">
+                <EditPet
                   token={token}
-                  post={post}
-                  onPostUpdated={this.onPostUpdated}
+                  pet={pet}
+                  onPetUpdated={this.onPetUpdated}
+                  resetPet={this.resetPet}
                 />
               </Route>
               <Route exact path="/register"

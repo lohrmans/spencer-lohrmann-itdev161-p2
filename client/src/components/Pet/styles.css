@@ -1,0 +1,50 @@
+.No-pet{
+  height: 400px;
+  width: 400px;
+}
+
+.No-pet *{
+  position: relative;
+  top: 50%;
+  left: 50%;
+}
+
+.pet-container{
+  display: flex;
+  justify-content: center;
+}
+
+.pet{
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.pet * {
+  display: flex;
+  justify-content: center;
+}
+
+.input *{
+  margin-left: 10%;
+}
+
+.edit-pet-container{
+  display: flex;
+  justify-content: center;
+}
+
+.edit-pet{
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.edit * {
+  display: flex;
+  justify-content: center;
+}

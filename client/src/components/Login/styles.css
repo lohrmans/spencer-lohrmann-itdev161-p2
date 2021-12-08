@@ -1,0 +1,17 @@
+.Login-container{
+  display: flex;
+  justify-content: center;
+}
+
+.Login{
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.Login * {
+  display: flex;
+  justify-content: center;
+}
