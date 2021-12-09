@@ -14,11 +14,4 @@ Features
     - Updates pet image based on mood.
   - Rename or delete selected pet.
     - Updates pet name or removes pet from database.
-=======
-Features  
-  - Register an account and login.  
-  - Create a new pet with custom name and color.  
-  - View list of created pets and select pet to interact with.  
-  - Feed and pat selected pet to make it happy.  
-  - Rename or delete selected pet.  
 
