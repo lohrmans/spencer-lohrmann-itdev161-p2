@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import './styles.css';
 import happy from '../../assets/happy.png';
 
+//Creates CreatePet component. Receives token and onPetCreated as props.
 const CreatePet = ({ token, onPetCreated }) => {
   let history = useHistory();
   const [petData, setPetData] = useState({
@@ -12,6 +13,7 @@ const CreatePet = ({ token, onPetCreated }) => {
   });
   const { name, color } = petData;
 
+  //onChange event handler for text box and color picker.
   const onChange = e => {
     const { name, value } = e.target;
 
@@ -21,6 +23,7 @@ const CreatePet = ({ token, onPetCreated }) => {
     });
   };
 
+  //Function that sends createPet request to api
   const create = async () => {
     if (!name || !color) {
       console.log('Name and color are required');

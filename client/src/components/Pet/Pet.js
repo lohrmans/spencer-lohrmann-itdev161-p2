@@ -4,21 +4,21 @@ import happy from '../../assets/happy.png';
 import sad from '../../assets/sad.png';
 import './styles.css';
 
+//Creates Pet component.
 const Pet = props => {
   const { pet, interactWithPet, deletePet } = props;
   
   let history = useHistory();
 
+  //Changes route to rename page on rename button click
   const rename = () => { 
     history.push(`/rename-pet/${pet._id}`);
   }
 
-  const getMood = () => {
-    const lid = pet.lastInteractionDate;
-    return Date.now() - lid > 5000 ? sad : happy;
-  }
+  //Pets become sad after 1 minute.
+  const getMood = () => Date.now() - pet.lastInteractionDate > 60000 ? sad : happy;
 
-  //3600000
+  
 
   return (
     <div>

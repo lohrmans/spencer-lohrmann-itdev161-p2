@@ -9,6 +9,7 @@ import Pet from './components/Pet/Pet';
 import CreatePet from './components/Pet/CreatePet';
 import EditPet from './components/Pet/EditPet';
 
+//Creates main component for app.
 class App extends React.Component {
   state = {
     pets: [],
@@ -17,10 +18,12 @@ class App extends React.Component {
     user: null
   }
 
+  //Authenticates user when app loads
   componentDidMount() {
       this.authenticateUser();
   }
 
+  //Sends authenticateUser request to api
   authenticateUser = () => {
     const token = localStorage.getItem('token');
 
@@ -57,6 +60,7 @@ class App extends React.Component {
     }
   };
 
+  //Fetches list of pets from api
   loadData = () => {
     const { token } = this.state;
 
@@ -79,18 +83,21 @@ class App extends React.Component {
     }
   };
 
+  //Resets state and user information
   logOut = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.setState({ user: null, token: null, pets:[], pet: null });
   }
 
+  //Sets pet state variable to selected pet
   viewPet = pet => {
     this.setState({
       pet: pet
     });
   };
 
+  //Sends deletePet request to api
   deletePet = pet => {
     const { token } = this.state;
 
@@ -116,6 +123,7 @@ class App extends React.Component {
     }
   };
 
+  //Sends interactWithPet request to api
   interactWithPet = pet => {
     const { token } = this.state;
 
@@ -140,6 +148,7 @@ class App extends React.Component {
     }
   };
 
+  //Updates pets state variable
   onPetCreated = pet => {
     const newPets = [...this.state.pets, pet];
 
@@ -148,6 +157,7 @@ class App extends React.Component {
     });
   };
 
+  //Updates list of pets with updated pet
   onPetUpdated = pet => {
     const newPets = [...this.state.pets];
     const index = newPets.findIndex(p => p._id === pet._id);
@@ -164,6 +174,7 @@ class App extends React.Component {
     this.setState({ pet: null });
   };
 
+  //Renders components
   render() {
     let { user, pets, pet, token } = this.state;
     const authProps = {

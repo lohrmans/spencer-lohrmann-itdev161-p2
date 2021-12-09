@@ -2,6 +2,7 @@ import React from 'react';
 import PetListItem from './PetListItem';
 import './styles.css';
 
+//Creates PetList component
 const PetList = props => {
   const { pets, clickPet } = props;
   return pets.map(pet => (

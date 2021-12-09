@@ -143,6 +143,7 @@ app.post(
   }
 );
 
+//Function for generating a JWT token
 const returnToken = (user, res) => {
   const payload = {
     user: {
@@ -321,9 +322,6 @@ app.put('/api/pets/:id/interact', auth, async (req, res) => {
     if (!pet) {
       return res.status(404).json({ msg: 'Pet not found' });
     }
-
-    console.error("pet.user.toString()" + pet.user.toString());
-    console.error("req.user.id" + req.user.id)
 
     //Make sure the request user created the pet
     if (pet.user.toString() !== req.user.id) {

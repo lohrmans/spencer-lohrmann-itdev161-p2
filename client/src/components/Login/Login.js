@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import './styles.css';
 
+//Creates login component. Receives authenticateUser function as props.
 const Login = ({ authenticateUser }) => {
   let history = useHistory();
   const [userData, setUserData] = useState({
@@ -14,6 +15,7 @@ const Login = ({ authenticateUser }) => {
   const { email, password } = userData;
   const { errors } = errorData;
 
+  //onChange event handler for text boxes.
   const onChange = e => {
     const { name, value } = e.target;
     setUserData({
@@ -22,6 +24,7 @@ const Login = ({ authenticateUser }) => {
     })
   }
 
+  //Function that sends login request to api
   const loginUser = async () => {
     const newUser = {
       email: email,

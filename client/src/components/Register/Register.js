@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import './styles.css';
 
+//Creates Register component. Receives authenticateUser as props
 const Register = ({ authenticateUser }) => {
   let history = useHistory();
   const [userData, setUserData] = useState({
@@ -16,6 +17,7 @@ const Register = ({ authenticateUser }) => {
   const { name, email, password, passwordConfirm } = userData;
   const { errors } = errorData;
 
+  //onChange event handler for text boxes
   const onChange = e => {
     const { name, value } = e.target;
     setUserData({
@@ -24,6 +26,7 @@ const Register = ({ authenticateUser }) => {
     })
   }
 
+  //Function that sends registerUser request to api
   const registerUser = async () => {
     if (password !== passwordConfirm) {
       console.log('Passwords do not match');

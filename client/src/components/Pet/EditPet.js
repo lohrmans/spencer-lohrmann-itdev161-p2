@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-// import './styles.css';
 
+//Creates EditPet component. Receives token, pet, onPetUpdated, resetPet as props.
 const EditPet = ({ token, pet, onPetUpdated, resetPet }) => {
   let history = useHistory();
   const [petData, setPetData] = useState({
@@ -10,6 +10,7 @@ const EditPet = ({ token, pet, onPetUpdated, resetPet }) => {
   });
   const { name } = petData;
 
+  //onChange event handler for pet name text box.
   const onChange = e => {
     const { name, value } = e.target;
 
@@ -19,6 +20,7 @@ const EditPet = ({ token, pet, onPetUpdated, resetPet }) => {
     });
   };
 
+  ////Function that sends rename request to api
   const update = async () => {
     if (!name) {
       console.log('Name is required');
